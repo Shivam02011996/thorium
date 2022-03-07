@@ -8,13 +8,47 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
+const midGlb= function (req, res, next){
+    console.log("Hi I am a Global middleware");
+    //logic
+    next()
+}
+
+
+const assignmentMW= function (req, res, next){
+    var currentdate = new Date(); 
+    var datetime = currentdate.getDate() + " "
+                + (currentdate.getMonth()+1)  + " " 
+                + currentdate.getFullYear() + "  "  
+                + currentdate.getHours() + ":"  
+                + currentdate.getMinutes() + ":" 
+                + currentdate.getSeconds();
+let ip = req.ip
+let url = req.originalurl
+
+
+console.log(`${datetime} ${ip} ${url}`)
+
+next()
+}
+
+app.use(assignmentMW)
+
+
+// const mongoose = require('mongoose');
+
+
+
+
 mongoose.connect("mongodb+srv://functionup-cohort:G0Loxqc9wFEGyEeJ@cluster0.rzotr.mongodb.net/Pritesh8769811-DB?retryWrites=true&w=majority", {
     useNewUrlParser: true
 })
+
 .then( () => console.log("MongoDb is connected"))
 .catch ( err => console.log(err) )
 
 app.use('/', route);
+
 
 
 app.listen(process.env.PORT || 3000, function () {
