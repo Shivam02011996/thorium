@@ -1,17 +1,24 @@
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/userModel");
 
-const createUser = async function (abcd, xyz) {
+const createUser = async function (req, res) {
   //You can name the req, res objects anything.
   //but the first parameter is always the request 
   //the second parameter is always the response
-  let data = abcd.body;
+  try{
+  let data = req.body;
   let savedData = await userModel.create(data);
-  console.log(abcd.newAtribute);
-  xyz.send({ msg: savedData });
-};
+  //console.log(abcd.newAtribute);
+  res.send({ msg: savedData });
+}
+catch (err) {
+  console.log("This is the error :", err.message)
+  res.status(400).send({ msg: "Error", error: err.message})
+ }
+}
 
-const loginUser = async function (req, res) {
+const login = async function (req, res) {
+  try{
   let userName = req.body.emailId;
   let password = req.body.password;
 
@@ -38,9 +45,15 @@ const loginUser = async function (req, res) {
   );
   res.setHeader("x-auth-token", token);
   res.send({ status: true, data: token });
+}catch(error){
+  res.status(400).send(error.message)
+  
+}
 };
 
+
 const getUserData = async function (req, res) {
+  try{
   let token = req.headers["x-Auth-token"];
   if (!token) token = req.headers["x-auth-token"];
 
@@ -64,9 +77,13 @@ const getUserData = async function (req, res) {
     return res.send({ status: false, msg: "No such user exists" });
 
   res.send({ status: true, data: userDetails });
+}catch(error){
+  res.status(500).send(error.message)
+}
 };
 
 const updateUser = async function (req, res) {
+  try{
 // Do the same steps here:
 // Check if the token is present
 // Check if the token present is a valid token
@@ -82,9 +99,13 @@ const updateUser = async function (req, res) {
   let userData = req.body;
   let updatedUser = await userModel.findOneAndUpdate({ _id: userId }, userData);
   res.send({ status: updatedUser, data: updatedUser });
+  }catch(error){
+    res.status(500).send(error.message)
+  }
 };
 
 const postMessage = async function (req, res) {
+  try{
     let message = req.body.message
     // Check if the token is present
     // Check if the token present is a valid token
@@ -113,10 +134,45 @@ const postMessage = async function (req, res) {
 
     //return the updated user document
     return res.send({status: true, data: updatedUser})
+
+}catch(error){
+  res.status(500).send(error.message)
 }
+}
+
+    const deleteUser = async function (req, res) {
+      try{
+      let token = req.headers["x-auth-token"];
+      if (!token) token = req.headers["x-auth-token"];
+    
+      if (!token) return res.send({ status: false, msg: "token must be required" });
+    
+    
+      let decodedToken = jwt.verify(token, "functionup-thorium");
+      if (!decodedToken)
+        return res.send({ status: false, msg: "token is invalid" });
+    
+    
+      let abc = req.params.userId;
+      let userInfo = await userModel.findById(abc);
+      
+      if (!userInfo) {
+        return res.send("No such user exists");
+      }
+    
+      // let userData = req.body;
+      let deleteUser = await userModel.findOneAndUpdate({ _id: abc },{$set:{isDeleted: true}},{new:true} );
+      res.send({ status: deleteUser, data: deleteUser });
+    }catch(error){
+      res.status(500).send(error.message)
+    }
+    
+  }
 
 module.exports.createUser = createUser;
 module.exports.getUserData = getUserData;
 module.exports.updateUser = updateUser;
-module.exports.loginUser = loginUser;
-module.exports.postMessage = postMessage
+module.exports.login = login;
+module.exports.postMessage = postMessage;
+module.exports.deleteUser = deleteUser;
+
