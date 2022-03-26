@@ -30,12 +30,17 @@ const internSchema = new mongoose.Schema({
         }
     },
 
-    // mobile: {
-    //     required: true,
-    //     unique: true,
-    //     type: String
-    // },
-    // mandatory, valid mobile number, unique},
+//    //byfunctionup
+//    validate: {
+//        validator: function (str) {
+//            return /\d{10}/.test(str);
+//        },
+//        message: props => `${props.value} is not a valid phone number!`
+//        }
+//    },
+
+
+
     collegeId: {
         type: ObjectId,
         ref: "collegeModel"

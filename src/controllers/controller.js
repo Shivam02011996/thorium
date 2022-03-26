@@ -99,21 +99,6 @@ const createDocument = async function (req, res) {
 
 
 
-// const getCollegeDetails = async function (req, res) {
-//     try {
-//             let coll_name = req.query.collegeName
-//             let data = await collegeModel.findOne({ name: coll_name })
-//             const C_id = data._id
-//             if (!data) {
-//                return res.status(404).send({ status: false, message: "The value is Invalid" });
-//             }
-//             let internDetails = await internModel.find({ collegeId: C_id, isDeleted: false })
-//            res.status(200).send({ data: data, Interns: internDetails })
-//         } catch (err) {
-//         console.log(err)
-//         res.status(500).send({status: false, message: err.message })
-//     }
-// }
 
 
 
